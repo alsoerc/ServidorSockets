@@ -4,11 +4,10 @@ package serversockets;
  *
  * @author alsorc
  */
-// Java implementation of Server side 
-// It contains two classes : Server and ClientHandler 
-// Save file as Server.java 
+//
+//Servidor encargado de recibir clientes y realizar envío de mensajes de difusión (broadcast)
+//
 import java.io.*;
-import java.text.*;
 import java.util.*;
 import java.net.*;
 import java.util.logging.Level;
@@ -31,13 +30,13 @@ public class Server {
                 // socket object to receive incoming client requests 
                 s = ss.accept();
                 listaSockets.add(s);
-                System.out.println("A new client is connected : " + s);
+                System.out.println("Nuevo cliente conectado : " + s);
 
-                // obtaining input and out streams 
+                // obtaining input and out streams
                 DataInputStream dis = new DataInputStream(s.getInputStream());
                 DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
-                System.out.println("Assigning new thread for this client");
+                System.out.println("Hilo asignado a cliente");
 
                 // create a new thread object 
                 Thread t = new ClientHandler(listaSockets, s, dis, dos);
@@ -56,8 +55,6 @@ public class Server {
 // ClientHandler class 
 class ClientHandler extends Thread {
 
-    DateFormat fordate = new SimpleDateFormat("yyyy/MM/dd");
-    DateFormat fortime = new SimpleDateFormat("hh:mm:ss");
     final DataInputStream dis;
     final DataOutputStream dos;
     final Socket s;
@@ -77,13 +74,13 @@ class ClientHandler extends Thread {
         while (true) {
 
             try {
-                
+
                 // receive the answer from client
                 received = dis.readUTF();
-                if(received != null|| received.equals("")){
-                    System.out.println(received);
+                if (received != null || received.equals("")) {
+                    System.out.println(java.time.LocalDateTime.now() + "\n" + received);
                 }
-                
+
                 for (Socket socket : listaSockets) {
                     try {
                         new DataOutputStream(
@@ -93,10 +90,10 @@ class ClientHandler extends Thread {
                         Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            }catch (IOException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
- 
+
         }
     }
 }
